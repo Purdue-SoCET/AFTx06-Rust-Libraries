@@ -7,9 +7,11 @@ pub struct CLINT {
 
 #[repr(C)]
 struct CLINTRegisterBlock {
-    pub msip:     RW<u32>,
-    pub mtime:    RW<u64>,
-    pub mtimecmp: RW<u64>,
+    pub msip:      RW<u32>,
+    pub mtimeh:    RW<u32>,
+    pub mtimel:    RW<u32>,
+    pub mtimecmph: RW<u32>,
+    pub mtimecmpl: RW<u32>,
 }
 
 impl CLINT {
