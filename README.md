@@ -1,2 +1,2 @@
-# AFTx06 Rust Libraries
+# aftx06_rust_libs
 Rust libraries for the AFTx06.
