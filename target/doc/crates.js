@@ -1,1 +1,0 @@
-window.ALL_CRATES = ["aftx06_rust_libs","vcell","volatile_register"];
