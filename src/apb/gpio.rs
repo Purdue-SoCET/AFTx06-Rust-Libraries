@@ -1,5 +1,19 @@
-use crate::common;
 use volatile_register::{RW};
+
+// GPIO Construction Check
+pub static mut GPIO_CONSTRUCTED: bool =  false;
+
+// GPIO Constants
+pub const GPIO: u32 =                  	0x80000000;
+pub const GPIO_DATA: u32 =             	GPIO + 0x04;
+pub const GPIO_DATA_DIRECTION: u32 =   	GPIO + 0x08;
+pub const GPIO_INTERRUPT_ENABLE: u32 =	GPIO + 0x0C;
+pub const GPIO_POSITIVE_EDGE: u32 =     GPIO + 0x10;
+pub const GPIO_NEGATIVE_EDGE: u32 =     GPIO + 0x14;
+pub const GPIO_INTERRUPT_CLEAR: u32 =	GPIO + 0x18;
+pub const GPIO_INTERRUPT_STATUS: u32 =	GPIO + 0x1C;
+pub const GPIOALL_AFTX06: u32 =         0xFF;
+pub const GPIOALL: u32 =                0xFFFFFFFF;
 
 pub struct GPIO {
     p: &'static mut GPIORegisterBlock
@@ -19,8 +33,8 @@ struct GPIORegisterBlock {
 impl GPIO {
     pub fn new() -> GPIO {
         unsafe {
-            if common::GPIO_CONSTRUCTED == false {
-                common::GPIO_CONSTRUCTED = true;
+            if GPIO_CONSTRUCTED == false {
+                GPIO_CONSTRUCTED = true;
                 GPIO {
                     p: &mut *(0x8000_0004 as *mut GPIORegisterBlock) 
                 }

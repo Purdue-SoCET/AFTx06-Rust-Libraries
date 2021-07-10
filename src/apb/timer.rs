@@ -1,6 +1,51 @@
 use crate::common;
 use volatile_register::{RW};
 
+// Timer Construction Check
+pub static mut TIM_CONSTRUCTED: bool =   false;
+
+// Timer Constants
+pub const TIM: u32 =                       0x80020000;
+pub const TIM_IOS: u32 =                   TIM + 0x00;
+pub const TIM_TCF: u32 =                   TIM + 0x04;
+pub const TIM_TCNT: u32 =                  TIM + 0x08;
+pub const TIM_TSCR: u32 =                  TIM + 0x0C;
+pub const TIM_TOV: u32 =                   TIM + 0x10;
+pub const TIM_TCR: u32 =                   TIM + 0x14;
+pub const TIM_TIE: u32 =                   TIM + 0x18;
+pub const TIM_TSCR2: u32 =                 TIM + 0x1C;
+pub const TIM_FLG1: u32 =                  TIM + 0x20;
+pub const TIM_FLG2: u32 =                  TIM + 0x24;
+pub const TIM_TCF_MASK: u32 =              0xFF;
+pub const TIM_TSCR_ENABLE: u32 =           1 << 7;
+pub const TIM_TSCR_DISABLE: u32 =          !(1 << 7);
+pub const TIM_TOV_MASK: u32 =              0xFF;
+pub const TIM_TCR_EDGE_DISABLE: u32 =      0x000;
+pub const TIM_TCR_EDGE_FALLING: u32 =      0x001;
+pub const TIM_TCR_EDGE_RISING: u32 =       0x100;
+pub const TIM_TCR_EDGE_EITHER: u32 =       0x101;
+pub const TIM_TCR_OUTPUT_DISCONNECT: u32 = 0x000 << 16;
+pub const TIM_TCR_OUTPUT_TOGGLE: u32 =     0x001 << 16;
+pub const TIM_TCR_OUTPUT_CLEAR: u32 =      0x100 << 16;
+pub const TIM_TCR_OUTPUT_SET: u32 =        0x101 << 16;
+pub const TIM_TIE_ENABLE: u32 =            1;
+pub const TIM_TIE_DISABLE: u32 =           !1;
+pub const TIM_TSCR2_TOI_ENABLE: u32 =      1 << 7;
+pub const TIM_TSCR2_TOI_DISABLE: u32 =     !(1 << 7);
+pub const TIM_TSCR2_TCRE_ENABLE: u32 =     1 << 6;
+pub const TIM_TSCR2_TCRE_DISABLE: u32 =    !(1 << 6);
+pub const TIM_TSCR2_PRE_MASK: u32 =        0x7;
+pub const TIM_TSCR2_PRE_DIV1: u32 =        0;
+pub const TIM_TSCR2_PRE_DIV2: u32 =        1;
+pub const TIM_TSCR2_PRE_DIV4: u32 =        2;
+pub const TIM_TSCR2_PRE_DIV8: u32 =        3;
+pub const TIM_TSCR2_PRE_DIV16: u32 =       4;
+pub const TIM_TSCR2_PRE_DIV32: u32 =       5;
+pub const TIM_TSCR2_PRE_DIV64: u32 =       6;
+pub const TIM_TSCR2_PRE_DIV128: u32 =      7;
+pub const TIM_FLG1_MASK: u32 =             0xFF;
+pub const TIM_FLG2_CLEAR: u32 =            1 << 7;
+
 pub struct TIM {
     p: &'static mut TIMRegisterBlock
 }
@@ -31,8 +76,8 @@ struct TIMRegisterBlock {
 impl TIM {
     pub fn new() -> TIM {
         unsafe {
-            if common::TIM_CONSTRUCTED == false {
-                common::TIM_CONSTRUCTED = true;
+            if TIM_CONSTRUCTED == false {
+                TIM_CONSTRUCTED = true;
                 TIM {
                     p: &mut *(0x8002_0000 as *mut TIMRegisterBlock)
                 }
@@ -46,7 +91,7 @@ impl TIM {
     pub fn enable(&mut self) {
         unsafe {
             let mut curr: u32 = self.p.tscr.read();
-            curr |= common::TIM_TSCR_ENABLE;
+            curr |= TIM_TSCR_ENABLE;
             self.p.tscr.write(curr);
         }
     }
@@ -54,7 +99,7 @@ impl TIM {
     pub fn disable(&mut self) {
         unsafe {
             let mut curr: u32 = self.p.tscr.read();
-            curr &= common::TIM_TSCR_DISABLE;
+            curr &= TIM_TSCR_DISABLE;
             self.p.tscr.write(curr);
         }
     }
@@ -78,7 +123,7 @@ impl TIM {
     pub fn set_prescaler(&mut self, pre_div: u32) {
         unsafe {
             let mut curr: u32 = self.p.tscr2.read();
-            curr = (curr & !(common::TIM_TSCR2_PRE_MASK)) | (common::TIM_TSCR2_PRE_MASK & pre_div);
+            curr = (curr & !(TIM_TSCR2_PRE_MASK)) | (TIM_TSCR2_PRE_MASK & pre_div);
             self.p.tscr2.write(curr);
         }
     }
@@ -133,7 +178,7 @@ impl TIM {
     pub fn clear_interrupt(&mut self, channels: u32) {
         unsafe {
             let mut curr = self.p.tflg1.read();
-            curr |= common::TIM_FLG1 & channels;
+            curr |= TIM_FLG1 & channels;
             self.p.tflg1.write(curr);
         }
     }
@@ -141,7 +186,7 @@ impl TIM {
     pub fn enable_cf(&mut self, channels: u32) {
         unsafe {
             let mut curr = self.p.tcf.read();
-            curr |= common::TIM_TCF_MASK & channels;
+            curr |= TIM_TCF_MASK & channels;
             self.p.tcf.write(curr);
         }
     }
@@ -149,7 +194,7 @@ impl TIM {
     pub fn enable_tov(&mut self, channels: u32) {
         unsafe {
             let mut curr = self.p.tov.read();
-            curr |= common::TIM_TOV_MASK & channels;
+            curr |= TIM_TOV_MASK & channels;
             self.p.tov.write(curr);
         }
     }
@@ -157,7 +202,7 @@ impl TIM {
     pub fn disable_tov(&mut self, channels: u32) {
         unsafe {
             let mut curr = self.p.tov.read();
-            curr &= !(common::TIM_TOV_MASK) | !channels;
+            curr &= !(TIM_TOV_MASK) | !channels;
             self.p.tov.write(curr);
         }
     }

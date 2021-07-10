@@ -1,5 +1,16 @@
-use crate::common;
 use volatile_register::{RW};
+
+// CLINT Construction Check
+pub static mut CLINT_CONSTRUCTED: bool = false;
+
+// CLINT Constants
+pub const CLINT: u32 =                  0xE0000000;
+pub const CLINT_MSIP: u32 =             CLINT + 0x00;
+pub const CLINT_MTIME: u32 =            CLINT + 0x04;
+pub const CLINT_MTIMECMP: u32 =         CLINT + 0x0C;
+pub const CLINT_MSIP_DISABLE: u32 =     !(1 << 0);
+pub const CLINT_MSIP_ENABLE: u32 =      1 << 0;
+pub const CLINT_MSIP_MASK: u32 =        1 << 0;
 
 pub struct CLINT {
     p: &'static mut CLINTRegisterBlock
@@ -17,8 +28,8 @@ struct CLINTRegisterBlock {
 impl CLINT {
     pub fn new() -> CLINT {
         unsafe {
-            if common::CLINT_CONSTRUCTED == false {
-                common::CLINT_CONSTRUCTED = true;
+            if CLINT_CONSTRUCTED == false {
+                CLINT_CONSTRUCTED = true;
                 CLINT {
                     p: &mut *(0xE000_0000 as *mut CLINTRegisterBlock) 
                 }
@@ -30,13 +41,13 @@ impl CLINT {
     }
 
     pub fn interrupt_status(&self) -> u32 {
-        self.p.msip.read() & common::CLINT_MSIP_MASK
+        self.p.msip.read() & CLINT_MSIP_MASK
     }
 
     pub fn set_interrupt(&mut self) {
         unsafe {
             let mut curr = self.p.msip.read();
-            curr |= common::CLINT_MSIP_ENABLE;
+            curr |= CLINT_MSIP_ENABLE;
             self.p.msip.write(curr);
         }
     }
@@ -44,7 +55,7 @@ impl CLINT {
     pub fn clear_interrupt(&mut self) {
         unsafe {
             let mut curr = self.p.msip.read();
-            curr &= common::CLINT_MSIP_DISABLE;
+            curr &= CLINT_MSIP_DISABLE;
             self.p.msip.write(curr);
         }
     }
