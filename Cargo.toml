@@ -1,5 +1,5 @@
 [package]
-name = "aftx06_rust_libs"
+name = "aftx06"
 version = "0.1.0"
 edition = "2018"
 
