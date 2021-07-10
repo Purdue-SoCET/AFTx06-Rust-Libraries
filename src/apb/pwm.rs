@@ -36,7 +36,7 @@ impl PWM {
             if PWM_CONSTRUCTED == false {
                 PWM_CONSTRUCTED = true;
                 PWM {
-                    p: &mut *(0x8000_0004 as *mut PWMRegisterBlock) 
+                    p: &mut *(0x8001_0000 as *mut PWMRegisterBlock) 
                 }
             }
             else { 
