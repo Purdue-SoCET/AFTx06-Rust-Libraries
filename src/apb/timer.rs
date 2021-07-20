@@ -46,6 +46,28 @@ pub const TIM_TSCR2_PRE_DIV128: u32 =      7;
 pub const TIM_FLG1_MASK: u32 =             0xFF;
 pub const TIM_FLG2_CLEAR: u32 =            1 << 7;
 
+pub enum Channel {
+    CH0,
+    CH1,
+    CH2,
+    CH3,
+    CH4,
+    CH5,
+    CH6,
+    CH7,
+}
+
+pub enum Pre {
+    DIV1 =   0,
+    DIV2 =   1,
+    DIV4 =   2,
+    DIV8 =   3,
+    DIV16 =  4,
+    DIV32 =  5,
+    DIV64 =  6,
+    DIV128 = 7,
+}
+
 pub struct TIM {
     p: &'static mut TIMRegisterBlock
 }
@@ -104,78 +126,214 @@ impl TIM {
         }
     }
 
-    pub fn set_output_action(&mut self, channel: u32, output_action: u32) {
+    pub fn set_output_action(&mut self, channel: Channel, output_action: u32) {
         unsafe {
             let mut curr: u32 = self.p.tcr.read();
-            curr = (curr & !(common::tim_tcr_output_mask(channel))) | (common::tim_tcr_output_mask(channel) & (output_action << channel));
+            match channel {
+                Channel::CH0 => curr = (curr & !(common::tim_tcr_output_mask(0))) | (common::tim_tcr_output_mask(0) & (output_action << 0)),
+                Channel::CH1 => curr = (curr & !(common::tim_tcr_output_mask(1))) | (common::tim_tcr_output_mask(1) & (output_action << 1)),
+                Channel::CH2 => curr = (curr & !(common::tim_tcr_output_mask(2))) | (common::tim_tcr_output_mask(2) & (output_action << 2)),
+                Channel::CH3 => curr = (curr & !(common::tim_tcr_output_mask(3))) | (common::tim_tcr_output_mask(3) & (output_action << 3)),
+                Channel::CH4 => curr = (curr & !(common::tim_tcr_output_mask(4))) | (common::tim_tcr_output_mask(4) & (output_action << 4)),
+                Channel::CH5 => curr = (curr & !(common::tim_tcr_output_mask(5))) | (common::tim_tcr_output_mask(5) & (output_action << 5)),
+                Channel::CH6 => curr = (curr & !(common::tim_tcr_output_mask(6))) | (common::tim_tcr_output_mask(6) & (output_action << 6)),
+                Channel::CH7 => curr = (curr & !(common::tim_tcr_output_mask(7))) | (common::tim_tcr_output_mask(7) & (output_action << 7)),
+            }
             self.p.tcr.write(curr);
         }
     }
 
-    pub fn set_input_capture_edge(&mut self, channel: u32, capture_edge: u32) {
+    pub fn set_input_capture_edge(&mut self, channel: Channel, capture_edge: u32) {
         unsafe {
             let mut curr: u32 = self.p.tcr.read();
-            curr = (curr & !(common::tim_tcr_edge_mask(channel))) | (common::tim_tcr_edge_mask(channel) & (capture_edge << channel));
+            match channel {
+                Channel::CH0 => curr = (curr & !(common::tim_tcr_edge_mask(0))) | (common::tim_tcr_edge_mask(0) & (capture_edge << 0)),
+                Channel::CH1 => curr = (curr & !(common::tim_tcr_edge_mask(1))) | (common::tim_tcr_edge_mask(1) & (capture_edge << 1)),
+                Channel::CH2 => curr = (curr & !(common::tim_tcr_edge_mask(2))) | (common::tim_tcr_edge_mask(2) & (capture_edge << 2)),
+                Channel::CH3 => curr = (curr & !(common::tim_tcr_edge_mask(3))) | (common::tim_tcr_edge_mask(3) & (capture_edge << 3)),
+                Channel::CH4 => curr = (curr & !(common::tim_tcr_edge_mask(4))) | (common::tim_tcr_edge_mask(4) & (capture_edge << 4)),
+                Channel::CH5 => curr = (curr & !(common::tim_tcr_edge_mask(5))) | (common::tim_tcr_edge_mask(5) & (capture_edge << 5)),
+                Channel::CH6 => curr = (curr & !(common::tim_tcr_edge_mask(6))) | (common::tim_tcr_edge_mask(6) & (capture_edge << 6)),
+                Channel::CH7 => curr = (curr & !(common::tim_tcr_edge_mask(7))) | (common::tim_tcr_edge_mask(7) & (capture_edge << 7)),
+            }
             self.p.tcr.write(curr);
         }
     }
 
-    pub fn set_prescaler(&mut self, pre_div: u32) {
+    pub fn set_prescaler(&mut self, pre_div: Pre) {
         unsafe {
             let mut curr: u32 = self.p.tscr2.read();
-            curr = (curr & !(TIM_TSCR2_PRE_MASK)) | (TIM_TSCR2_PRE_MASK & pre_div);
+            match pre_div {
+                Pre::DIV1 =>   curr = (curr & !(TIM_TSCR2_PRE_MASK)) | (TIM_TSCR2_PRE_MASK & (Pre::DIV1 as u32)),
+                Pre::DIV2 =>   curr = (curr & !(TIM_TSCR2_PRE_MASK)) | (TIM_TSCR2_PRE_MASK & (Pre::DIV2 as u32)),
+                Pre::DIV4 =>   curr = (curr & !(TIM_TSCR2_PRE_MASK)) | (TIM_TSCR2_PRE_MASK & (Pre::DIV4 as u32)),
+                Pre::DIV8 =>   curr = (curr & !(TIM_TSCR2_PRE_MASK)) | (TIM_TSCR2_PRE_MASK & (Pre::DIV8 as u32)),
+                Pre::DIV16 =>  curr = (curr & !(TIM_TSCR2_PRE_MASK)) | (TIM_TSCR2_PRE_MASK & (Pre::DIV16 as u32)),
+                Pre::DIV32 =>  curr = (curr & !(TIM_TSCR2_PRE_MASK)) | (TIM_TSCR2_PRE_MASK & (Pre::DIV32 as u32)),
+                Pre::DIV64 =>  curr = (curr & !(TIM_TSCR2_PRE_MASK)) | (TIM_TSCR2_PRE_MASK & (Pre::DIV64 as u32)),
+                Pre::DIV128 => curr = (curr & !(TIM_TSCR2_PRE_MASK)) | (TIM_TSCR2_PRE_MASK & (Pre::DIV128 as u32)),
+            }
             self.p.tscr2.write(curr);
         }
     }
 
-    pub fn set_output_compare(&mut self, channel: u32, output_action: u32, interrupt_enable: u32, value: u32) {
+    pub fn set_output_compare(&mut self, channel: Channel, output_action: u32, interrupt_enable: u32, value: u32) {
         unsafe {
             let mut curr: u32 = self.p.tcr.read();
-            curr = (curr & !(common::tim_tcr_output_mask(channel))) | (common::tim_tcr_output_mask(channel) & (output_action << channel));
-            self.p.tcr.write(curr);
             match channel {
-                0 => self.p.tc0.write(value),
-                1 => self.p.tc1.write(value),
-                2 => self.p.tc2.write(value),
-                3 => self.p.tc3.write(value),
-                4 => self.p.tc4.write(value),
-                5 => self.p.tc5.write(value),
-                6 => self.p.tc6.write(value),
-                7 => self.p.tc7.write(value),
-                _ => panic!("You can't write to a channel outside the bounds of 0-7."),
+                Channel::CH0 => {
+                    curr = (curr & !(common::tim_tcr_output_mask(0))) | (common::tim_tcr_output_mask(0) & (output_action << 0));
+                    self.p.tcr.write(curr);
+                    self.p.tc0.write(value);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(0))) | (common::tim_tie_mask(0) & (interrupt_enable << 0));
+                }
+                Channel::CH1 => {
+                    curr = (curr & !(common::tim_tcr_output_mask(1))) | (common::tim_tcr_output_mask(1) & (output_action << 1));
+                    self.p.tcr.write(curr);
+                    self.p.tc1.write(value);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(1))) | (common::tim_tie_mask(1) & (interrupt_enable << 1));
+                }
+                Channel::CH2 => {
+                    curr = (curr & !(common::tim_tcr_output_mask(2))) | (common::tim_tcr_output_mask(2) & (output_action << 2));
+                    self.p.tcr.write(curr);
+                    self.p.tc2.write(value);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(2))) | (common::tim_tie_mask(2) & (interrupt_enable << 2));
+                }
+                Channel::CH3 => {
+                    curr = (curr & !(common::tim_tcr_output_mask(3))) | (common::tim_tcr_output_mask(3) & (output_action << 3));
+                    self.p.tcr.write(curr);
+                    self.p.tc3.write(value);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(3))) | (common::tim_tie_mask(3) & (interrupt_enable << 3));
+                }
+                Channel::CH4 => {
+                    curr = (curr & !(common::tim_tcr_output_mask(4))) | (common::tim_tcr_output_mask(4) & (output_action << 4));
+                    self.p.tcr.write(curr);
+                    self.p.tc4.write(value);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(4))) | (common::tim_tie_mask(4) & (interrupt_enable << 4));
+                }
+                Channel::CH5 => {
+                    curr = (curr & !(common::tim_tcr_output_mask(5))) | (common::tim_tcr_output_mask(5) & (output_action << 5));
+                    self.p.tcr.write(curr);
+                    self.p.tc5.write(value);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(5))) | (common::tim_tie_mask(5) & (interrupt_enable << 5));
+                }
+                Channel::CH6 => {
+                    curr = (curr & !(common::tim_tcr_output_mask(6))) | (common::tim_tcr_output_mask(6) & (output_action << 6));
+                    self.p.tcr.write(curr);
+                    self.p.tc6.write(value);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(6))) | (common::tim_tie_mask(6) & (interrupt_enable << 6));
+                }
+                Channel::CH7 => {
+                    curr = (curr & !(common::tim_tcr_output_mask(7))) | (common::tim_tcr_output_mask(7) & (output_action << 7));
+                    self.p.tcr.write(curr);
+                    self.p.tc7.write(value);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(7))) | (common::tim_tie_mask(7) & (interrupt_enable << 7));
+                }
             }
-            curr = self.p.tie.read();
-            curr = (curr & !(common::tim_tie_mask(channel))) | (common::tim_tie_mask(channel) & (interrupt_enable << channel));
             self.p.tie.write(curr);
         }
     }
 
-    pub fn set_input_capture(&mut self, channel: u32, capture_edge: u32, interrupt_enable: u32) {
+    pub fn set_input_capture(&mut self, channel: Channel, capture_edge: u32, interrupt_enable: u32) {
         unsafe {
             let mut curr = self.p.tcr.read();
-            curr = (curr & !(common::tim_tcr_edge_mask(channel))) | (common::tim_tcr_edge_mask(channel) & (capture_edge << channel));
-            self.p.tcr.write(curr);
-            curr = self.p.tie.read();
-            curr = (curr & !(common::tim_tie_mask(channel))) | (common::tim_tie_mask(channel) & (interrupt_enable << channel));
+            match channel {
+                Channel::CH0 => {
+                    curr = (curr & !(common::tim_tcr_edge_mask(0))) | (common::tim_tcr_edge_mask(0) & (capture_edge << 0));
+                    self.p.tcr.write(curr);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(0))) | (common::tim_tie_mask(0) & (interrupt_enable << 0));
+                }
+                Channel::CH1 => {
+                    curr = (curr & !(common::tim_tcr_edge_mask(1))) | (common::tim_tcr_edge_mask(1) & (capture_edge << 1));
+                    self.p.tcr.write(curr);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(1))) | (common::tim_tie_mask(1) & (interrupt_enable << 1));
+                }
+                Channel::CH2 => {
+                    curr = (curr & !(common::tim_tcr_edge_mask(2))) | (common::tim_tcr_edge_mask(2) & (capture_edge << 2));
+                    self.p.tcr.write(curr);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(2))) | (common::tim_tie_mask(2) & (interrupt_enable << 2));
+                }
+                Channel::CH3 => {
+                    curr = (curr & !(common::tim_tcr_edge_mask(3))) | (common::tim_tcr_edge_mask(3) & (capture_edge << 3));
+                    self.p.tcr.write(curr);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(3))) | (common::tim_tie_mask(3) & (interrupt_enable << 3));
+                }
+                Channel::CH4 => {
+                    curr = (curr & !(common::tim_tcr_edge_mask(4))) | (common::tim_tcr_edge_mask(4) & (capture_edge << 4));
+                    self.p.tcr.write(curr);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(4))) | (common::tim_tie_mask(4) & (interrupt_enable << 4));
+                }
+                Channel::CH5 => {
+                    curr = (curr & !(common::tim_tcr_edge_mask(5))) | (common::tim_tcr_edge_mask(5) & (capture_edge << 5));
+                    self.p.tcr.write(curr);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(5))) | (common::tim_tie_mask(5) & (interrupt_enable << 5));
+                }
+                Channel::CH6 => {
+                    curr = (curr & !(common::tim_tcr_edge_mask(6))) | (common::tim_tcr_edge_mask(6) & (capture_edge << 6));
+                    self.p.tcr.write(curr);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(6))) | (common::tim_tie_mask(6) & (interrupt_enable << 6));
+                }
+                Channel::CH7 => {
+                    curr = (curr & !(common::tim_tcr_edge_mask(7))) | (common::tim_tcr_edge_mask(7) & (capture_edge << 7));
+                    self.p.tcr.write(curr);
+                    curr = self.p.tie.read();
+                    curr = (curr & !(common::tim_tie_mask(7))) | (common::tim_tie_mask(7) & (interrupt_enable << 7));
+                }
+            }
             self.p.tie.write(curr);
         }
     }
 
-    pub fn read_input_capture(&self, channel: u32) -> u32 {
+    pub fn read_input_capture(&self, channel: Channel) -> u32 {
         match channel {
-            0 => self.p.tc0.read(),
-            1 => self.p.tc1.read(),
-            2 => self.p.tc2.read(),
-            3 => self.p.tc3.read(),
-            4 => self.p.tc4.read(),
-            5 => self.p.tc5.read(),
-            6 => self.p.tc6.read(),
-            7 => self.p.tc7.read(),
-            _ => panic!("You can't read a channel outside the bounds of 0-7."),
+            Channel::CH0 => self.p.tc0.read(),
+            Channel::CH1 => self.p.tc1.read(),
+            Channel::CH2 => self.p.tc2.read(),
+            Channel::CH3 => self.p.tc3.read(),
+            Channel::CH4 => self.p.tc4.read(),
+            Channel::CH5 => self.p.tc5.read(),
+            Channel::CH6 => self.p.tc6.read(),
+            Channel::CH7 => self.p.tc7.read(),
         }
     }
 
-    pub fn clear_interrupt(&mut self, channels: u32) {
+    pub fn clear_interrupt(&mut self, channel: Channel) {
+        unsafe {
+            let mut curr = self.p.tflg1.read();
+            match channel {
+                Channel::CH0 => curr |= TIM_FLG1 & 0,
+                Channel::CH1 => curr |= TIM_FLG1 & 1,
+                Channel::CH2 => curr |= TIM_FLG1 & 2,
+                Channel::CH3 => curr |= TIM_FLG1 & 3,
+                Channel::CH4 => curr |= TIM_FLG1 & 4,
+                Channel::CH5 => curr |= TIM_FLG1 & 5,
+                Channel::CH6 => curr |= TIM_FLG1 & 6,
+                Channel::CH7 => curr |= TIM_FLG1 & 7,
+            }
+            self.p.tflg1.write(curr);
+        }
+    }
+    
+    pub fn clear_interrupts(&mut self, channels: u32) {
+        if channels > common::U8_MAX
+        {
+            panic!("Channels must be of type u8.")
+        }
         unsafe {
             let mut curr = self.p.tflg1.read();
             curr |= TIM_FLG1 & channels;
@@ -183,7 +341,28 @@ impl TIM {
         }
     }
 
-    pub fn enable_cf(&mut self, channels: u32) {
+    pub fn enable_cf(&mut self, channel: Channel) {
+        unsafe {
+            let mut curr = self.p.tcf.read();
+            match channel {
+                Channel::CH0 => curr |= TIM_TCF_MASK & 0,
+                Channel::CH1 => curr |= TIM_TCF_MASK & 1,
+                Channel::CH2 => curr |= TIM_TCF_MASK & 2,
+                Channel::CH3 => curr |= TIM_TCF_MASK & 3,
+                Channel::CH4 => curr |= TIM_TCF_MASK & 4,
+                Channel::CH5 => curr |= TIM_TCF_MASK & 5,
+                Channel::CH6 => curr |= TIM_TCF_MASK & 6,
+                Channel::CH7 => curr |= TIM_TCF_MASK & 7,
+            }
+            self.p.tcf.write(curr);
+        }
+    }
+
+    pub fn enable_cfs(&mut self, channels: u32) {
+        if channels > common::U8_MAX
+        {
+            panic!("Channels must be of type u8.")
+        }
         unsafe {
             let mut curr = self.p.tcf.read();
             curr |= TIM_TCF_MASK & channels;
@@ -191,7 +370,24 @@ impl TIM {
         }
     }
 
-    pub fn enable_tov(&mut self, channels: u32) {
+    pub fn enable_tov(&mut self, channel: Channel) {
+        unsafe {
+            let mut curr = self.p.tov.read();
+            match channel {
+                Channel::CH0 => curr |= TIM_TOV_MASK & 0,
+                Channel::CH1 => curr |= TIM_TOV_MASK & 1,
+                Channel::CH2 => curr |= TIM_TOV_MASK & 2,
+                Channel::CH3 => curr |= TIM_TOV_MASK & 3,
+                Channel::CH4 => curr |= TIM_TOV_MASK & 4,
+                Channel::CH5 => curr |= TIM_TOV_MASK & 5,
+                Channel::CH6 => curr |= TIM_TOV_MASK & 6,
+                Channel::CH7 => curr |= TIM_TOV_MASK & 7,
+            }
+            self.p.tov.write(curr);
+        }
+    }
+
+    pub fn enable_tovs(&mut self, channels: u32) {
         unsafe {
             let mut curr = self.p.tov.read();
             curr |= TIM_TOV_MASK & channels;
@@ -199,7 +395,28 @@ impl TIM {
         }
     }
 
-    pub fn disable_tov(&mut self, channels: u32) {
+    pub fn disable_tov(&mut self, channel: Channel) {
+        unsafe {
+            let mut curr = self.p.tov.read();
+            match channel {
+                Channel::CH0 => curr &= !(TIM_TOV_MASK) | !(0),
+                Channel::CH1 => curr &= !(TIM_TOV_MASK) | !(1),
+                Channel::CH2 => curr &= !(TIM_TOV_MASK) | !(2),
+                Channel::CH3 => curr &= !(TIM_TOV_MASK) | !(3),
+                Channel::CH4 => curr &= !(TIM_TOV_MASK) | !(4),
+                Channel::CH5 => curr &= !(TIM_TOV_MASK) | !(5),
+                Channel::CH6 => curr &= !(TIM_TOV_MASK) | !(6),
+                Channel::CH7 => curr &= !(TIM_TOV_MASK) | !(7),
+            }
+            self.p.tov.write(curr);
+        }
+    }
+
+    pub fn disable_tovs(&mut self, channels: u32) {
+        if channels > common::U8_MAX
+        {
+            panic!("Channels must be of type u8.")
+        }
         unsafe {
             let mut curr = self.p.tov.read();
             curr &= !(TIM_TOV_MASK) | !channels;

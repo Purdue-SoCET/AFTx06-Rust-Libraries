@@ -1,5 +1,5 @@
-use volatile_register::{RW};
 use crate::common::{U8_MAX};
+use volatile_register::{RW};
 
 // GPIO Construction Check
 pub static mut GPIO_CONSTRUCTED: bool =  false;
