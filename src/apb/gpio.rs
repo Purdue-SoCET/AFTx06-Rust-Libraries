@@ -81,14 +81,14 @@ impl GPIO {
         }
     }
 
-    pub fn enable_inputs(&mut self, pins: u32) {
-        if pins > U8_MAX
+    pub fn enable_inputs(&mut self, pins: u8) {
+        if (pins as u32) > (U8_MAX as u32)
         {
             panic!("Pins must be of type u8.")
         }
         unsafe {
             let mut curr: u32 = self.p.data_dir.read();
-            curr &= !pins;
+            curr &= !(pins as u32);
             self.p.data_dir.write(curr);
         }
     }
@@ -106,12 +106,12 @@ impl GPIO {
         }
     }
 
-    pub fn read_inputs(&self, pins: u32) -> u32 {
-        if pins > U8_MAX
+    pub fn read_inputs(&self, pins: u8) -> u32 {
+        if (pins as u32) > (U8_MAX as u32)
         {
             panic!("Pins must be of type u8.")
         }
-        self.p.data.read() & pins
+        self.p.data.read() & (pins as u32)
     }
 
     pub fn enable_output(&mut self, pin: Pin) {
@@ -131,14 +131,14 @@ impl GPIO {
         }
     }
 
-    pub fn enable_outputs(&mut self, pins: u32) {
-        if pins > U8_MAX
+    pub fn enable_outputs(&mut self, pins: u8) {
+        if (pins as u32) > (U8_MAX as u32)
         {
             panic!("Pins must be of type u8.")
         }
         unsafe {
             let mut curr: u32 = self.p.data_dir.read();
-            curr |= pins;
+            curr |= pins as u32;
             self.p.data_dir.write(curr);
         }
     }
@@ -208,15 +208,15 @@ impl GPIO {
         }
     }
 
-    pub fn set_outputs(&mut self, pins: u32, pin_outputs: u32) {
-        if pins > U8_MAX || pin_outputs > U8_MAX
+    pub fn set_outputs(&mut self, pins: u8, pin_outputs: u8) {
+        if (pins as u32) > (U8_MAX as u32) || (pin_outputs as u32) > (U8_MAX as u32)
         {
             panic!("Pins must be of type u8.")
         }
         unsafe {
             let mut curr: u32 = self.p.data.read();
-            curr &= !pins;
-            curr |= pins & pin_outputs;
+            curr &= !(pins as u32);
+            curr |= (pins as u32) & (pin_outputs as u32);
             self.p.data.write(curr);
         }
     }
@@ -302,20 +302,20 @@ impl GPIO {
         }
     }
 
-    pub fn enable_interrupts_posedge(&mut self, pins: u32) {
-        if pins > U8_MAX
+    pub fn enable_interrupts_posedge(&mut self, pins: u8) {
+        if (pins as u32) > (U8_MAX as u32)
         {
             panic!("Pins must be of type u8.")
         }
         unsafe {
             let mut curr: u32 = self.p.neg_edge.read();
-            curr &= !pins;
+            curr &= !(pins as u32);
             self.p.neg_edge.write(curr);
             curr = self.p.pos_edge.read();
-            curr |= pins;
+            curr |= pins as u32;
             self.p.pos_edge.write(curr);
             curr = self.p.intr_en.read();
-            curr |= pins;
+            curr |= pins as u32;
             self.p.intr_en.write(curr);
         }
     }
@@ -377,17 +377,17 @@ impl GPIO {
         }
     }
 
-    pub fn disable_interrupts_posedge(&mut self, pins: u32) {
-        if pins > U8_MAX
+    pub fn disable_interrupts_posedge(&mut self, pins: u8) {
+        if (pins as u32) > (U8_MAX as u32)
         {
             panic!("Pins must be of type u8.")
         }
         unsafe {
             let mut curr: u32 = self.p.intr_en.read();
-            curr &= !pins;
+            curr &= !(pins as u32);
             self.p.intr_en.write(curr);
             curr = self.p.pos_edge.read();
-            curr &= !pins;
+            curr &= !(pins as u32);
             self.p.pos_edge.write(curr);
         }
     }
@@ -409,14 +409,14 @@ impl GPIO {
         }
     }
 
-    pub fn clear_interrupts(&mut self, pins: u32) {
-        if pins > U8_MAX
+    pub fn clear_interrupts(&mut self, pins: u8) {
+        if (pins as u32) > (U8_MAX as u32)
         {
             panic!("Pins must be of type u8.")
         }
         unsafe {
             let mut curr: u32 = self.p.intr_clr.read();
-            curr |= pins;
+            curr |= pins as u32;
             self.p.intr_clr.write(curr);
         }
     }
@@ -434,11 +434,11 @@ impl GPIO {
         }
     }
 
-    pub fn interrupts_status(&self, pins: u32) -> u32 {
-        if pins > U8_MAX
+    pub fn interrupts_status(&self, pins: u8) -> u32 {
+        if (pins as u32) > (U8_MAX as u32)
         {
             panic!("Pins must be of type u8.")
         }
-        self.p.intr_sts.read() & pins
+        self.p.intr_sts.read() & (pins as u32)
     }
 }

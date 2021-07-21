@@ -330,7 +330,7 @@ impl TIM {
     }
     
     pub fn clear_interrupts(&mut self, channels: u32) {
-        if channels > common::U8_MAX
+        if channels > (common::U8_MAX as u32)
         {
             panic!("Channels must be of type u8.")
         }
@@ -359,7 +359,7 @@ impl TIM {
     }
 
     pub fn enable_cfs(&mut self, channels: u32) {
-        if channels > common::U8_MAX
+        if channels > (common::U8_MAX as u32)
         {
             panic!("Channels must be of type u8.")
         }
@@ -413,7 +413,7 @@ impl TIM {
     }
 
     pub fn disable_tovs(&mut self, channels: u32) {
-        if channels > common::U8_MAX
+        if channels > (common::U8_MAX as u32)
         {
             panic!("Channels must be of type u8.")
         }

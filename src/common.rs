@@ -1,6 +1,6 @@
 // Chip Frequency
 pub const CHIP_FREQ: u32 = 100000000;
-pub const U8_MAX: u32 =    0xFF;
+pub const U8_MAX: u8 =     u8::MAX;
 
 // Assorted Helper Functions
 pub fn gpion(pin: u32) -> u32 {
